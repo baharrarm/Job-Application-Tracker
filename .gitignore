@@ -482,3 +482,5 @@ $RECYCLE.BIN/
 *.swp
 API/appsettings.json
 API/tracker.db
+API/tracker.db-shm
+API/tracker.db-wal
