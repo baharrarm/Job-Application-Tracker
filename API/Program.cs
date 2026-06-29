@@ -1,3 +1,6 @@
+using Application.Core;
+using Application.Jobs.Queries;
+using Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -11,6 +14,8 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddCors();
+builder.Services.AddMediatR(x => x.RegisterServicesFromAssemblyContaining<GetJobsList.Handler>());
+builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
 
 var app = builder.Build();

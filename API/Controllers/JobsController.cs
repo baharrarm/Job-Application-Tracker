@@ -1,26 +1,44 @@
 using System;
+using Application.Jobs.Commands;
+using Application.Jobs.Queries;
 using Domain;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
 
 namespace API.Controllers;
 
-public class JobsController (AppDbContext context) : BaseApiController
+public class JobsController : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<List<Job>>> GetJobs (){
-        return await context.Jobs.ToListAsync();
+        return await Mediator.Send(new GetJobsList.Query());
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Job>> GetJobDetails(string id)
     {
-        var job = await context.Jobs.FindAsync(id);
+        return await Mediator.Send(new GetJobDetails.Query{Id = id});
+    }
 
-        if (job == null) 
-            return NotFound();
+    [HttpPost]
+    public async Task<ActionResult<string>> AddJob(Job job)
+    {
+        return await Mediator.Send(new AddJob.Command{Job = job});
+    }
 
-        return job;
+    [HttpPut]
+    public async Task<ActionResult> EditJob(Job job)
+    {
+        await Mediator.Send(new EditJob.Command{Job = job});
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteJob(string id)
+    {
+        await Mediator.Send(new DeleteJob.Command{Id = id});
+
+        return Ok();
     }
 }
